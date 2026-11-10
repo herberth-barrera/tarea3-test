@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block titulo %}Resumen{% endblock %}
+{% block contenido %}
+<div class="pagina-cab"><div><h1>Resumen de expedientes</h1><p class="sub">Clasificación según los archivos realmente subidos.</p></div></div>
+<div class="kpis">
+  <div class="kpi"><span class="kpi-ico completo"><svg class="ico"><use href="#i-check"/></svg></span><div><span class="kpi-num">{{ completos }}</span><span class="kpi-txt">Completos</span></div></div>
+  <div class="kpi"><span class="kpi-ico vencidos"><svg class="ico"><use href="#i-clock"/></svg></span><div><span class="kpi-num">{{ con_vencidos }}</span><span class="kpi-txt">Con documentos vencidos</span></div></div>
+  <div class="kpi"><span class="kpi-ico proceso"><svg class="ico"><use href="#i-file"/></svg></span><div><span class="kpi-num">{{ en_proceso }}</span><span class="kpi-txt">Incompletos en proceso</span></div></div>
+  <div class="kpi"><span class="kpi-ico vacio"><svg class="ico"><use href="#i-alert"/></svg></span><div><span class="kpi-num">{{ sin_archivos }}</span><span class="kpi-txt">Incompletos sin archivos</span></div></div>
+</div>
+<div class="dos-col iguales">
+  <div class="card panel">
+    <h3>Distribución de expedientes</h3>
+    <div class="dist-fila"><span>Completos</span><progress class="completo" max="{{ total }}" value="{{ completos }}"></progress><b>{{ completos }}</b></div>
+    <div class="dist-fila"><span>Con vencidos</span><progress class="vencidos" max="{{ total }}" value="{{ con_vencidos }}"></progress><b>{{ con_vencidos }}</b></div>
+    <div class="dist-fila"><span>En proceso</span><progress class="proceso" max="{{ total }}" value="{{ en_proceso }}"></progress><b>{{ en_proceso }}</b></div>
+    <div class="dist-fila"><span>Sin archivos</span><progress class="vacio" max="{{ total }}" value="{{ sin_archivos }}"></progress><b>{{ sin_archivos }}</b></div>
+  </div>
+  <div class="card panel">
+    <h3>Documentos subidos</h3>
+    <div class="grande-num">{{ docs_subidos }} <span class="ayuda">de {{ docs_requeridos }}</span></div>
+    <progress class="azul" max="{{ docs_requeridos }}" value="{{ docs_subidos }}"></progress>
+    <p class="ayuda sep-top">Total de empleados: <strong>{{ total }}</strong></p>
+  </div>
+</div>
+<h2>Detalle por empleado</h2>
+<div class="card tabla-card">
+<table>
+  <tr><th>Empleado</th><th>Archivos subidos</th><th>Vencidos</th><th>Clasificación</th></tr>
+  {% for d in detalle %}
+  <tr>
+    <td><div class="persona"><span class="avatar">{{ d.datos.nombre|iniciales }}</span><div><strong>{{ d.datos.nombre }}</strong><span class="peq">{{ d.datos.codigo }}</span></div></div></td>
+    <td>{{ d.datos.con_archivo }} de {{ d.datos.total }}</td>
+    <td>{{ d.datos.vencidos }}</td>
+    <td><span class="badge {{ d.clase }}">{{ d.estado }}</span></td>
+  </tr>
+  {% endfor %}
+</table>
+</div>
+{% endblock %}

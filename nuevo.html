@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block titulo %}Registrar empleado{% endblock %}
+{% block contenido %}
+<div class="pagina-cab"><div><h1>Registrar empleado</h1><p class="sub">Al guardar se crea su expediente con todos los documentos pendientes.</p></div></div>
+<div class="card form-card">
+{% if error %}<p class="error">{{ error }}</p>{% endif %}
+<form method="POST" action="/empleados/nuevo">
+  <div class="form-grid">
+    <div><label>Código de empleado</label><input type="text" name="codigo" value="{{ datos.codigo }}" placeholder="HDD-007"></div>
+    <div><label>Nombre del colaborador</label><input type="text" name="nombre" value="{{ datos.nombre }}"></div>
+    <div><label>Puesto</label><input type="text" name="puesto" value="{{ datos.puesto }}"></div>
+    <div><label>Área o departamento</label><input type="text" name="area" value="{{ datos.area }}"></div>
+    <div><label>Sucursal</label>
+      <select name="sucursal">
+        <option value="">-- Selecciona --</option>
+        {% for s in sucursales %}
+        <option value="{{ s }}" {% if datos.sucursal == s %}selected{% endif %}>{{ s }}</option>
+        {% endfor %}
+      </select></div>
+    <div><label>Fecha de ingreso</label><input type="date" name="fecha_ingreso" value="{{ datos.fecha_ingreso }}"></div>
+  </div>
+  <div class="form-pie">
+    <button type="submit">Guardar empleado</button>
+    <a class="boton secundario" href="/empleados">Cancelar</a>
+  </div>
+</form>
+</div>
+{% endblock %}

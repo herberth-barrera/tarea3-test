@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block titulo %}{{ titulo }}{% endblock %}
+{% block contenido %}
+<div class="card error-pag">
+  <svg class="ico"><use href="#i-alert"/></svg>
+  <h1>{{ titulo }}</h1>
+  <p>{{ mensaje }}</p>
+  {% if detalle %}<div class="tecnico">{{ detalle }}</div>{% endif %}
+  <a class="boton" href="/empleados">Volver al listado</a>
+</div>
+{% endblock %}

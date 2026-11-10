@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block titulo %}Empleados{% endblock %}
+{% block contenido %}
+<div class="pagina-cab">
+  <div><h1>Expedientes del personal</h1><p class="sub">Estado documental de cada colaborador del hospital.</p></div>
+  <a class="boton" href="/empleados/nuevo"><svg class="ico"><use href="#i-user-plus"/></svg>Registrar empleado</a>
+</div>
+<div class="kpis">
+  <div class="kpi"><span class="kpi-ico azul"><svg class="ico"><use href="#i-users"/></svg></span><div><span class="kpi-num">{{ kpis.total }}</span><span class="kpi-txt">Empleados</span></div></div>
+  <div class="kpi"><span class="kpi-ico completo"><svg class="ico"><use href="#i-check"/></svg></span><div><span class="kpi-num">{{ kpis.completos }}</span><span class="kpi-txt">Expedientes completos</span></div></div>
+  <div class="kpi"><span class="kpi-ico vencidos"><svg class="ico"><use href="#i-clock"/></svg></span><div><span class="kpi-num">{{ kpis.con_vencidos }}</span><span class="kpi-txt">Con documentos vencidos</span></div></div>
+  <div class="kpi"><span class="kpi-ico azul"><svg class="ico"><use href="#i-file"/></svg></span><div><span class="kpi-num">{{ kpis.docs_subidos }} de {{ kpis.docs_requeridos }}</span><span class="kpi-txt">Documentos subidos</span></div></div>
+</div>
+<div class="card tabla-card">
+<table>
+  <tr><th>Empleado</th><th>Puesto</th><th>Sucursal</th><th>Archivos subidos</th><th>Checklist</th><th>Estado</th><th>Acciones</th></tr>
+  {% for e in empleados %}
+  <tr>
+    <td><div class="persona"><span class="avatar">{{ e.datos.nombre|iniciales }}</span><div><strong>{{ e.datos.nombre }}</strong><span class="peq">{{ e.datos.codigo }}</span></div></div></td>
+    <td>{{ e.datos.puesto }}<span class="peq">{{ e.datos.area }}</span></td>
+    <td><span class="pill">{{ e.datos.sucursal }}</span></td>
+    <td class="prog"><progress class="{{ e.clase }}" max="{{ e.datos.total }}" value="{{ e.datos.con_archivo }}"></progress><span class="peq">{{ e.datos.con_archivo }} de {{ e.datos.total }}</span></td>
+    <td>{{ e.datos.entregados }} de {{ e.datos.total }}</td>
+    <td><span class="badge {{ e.clase }}">{{ e.estado }}</span></td>
+    <td>
+      <div class="acciones">
+        <a class="boton chico" href="/empleados/{{ e.datos.id }}/archivos"><svg class="ico"><use href="#i-folder"/></svg>Archivos</a>
+        <a class="boton chico suave solo-icono" href="/empleados/editar/{{ e.datos.id }}" title="Modificar expediente" aria-label="Modificar expediente"><svg class="ico"><use href="#i-edit"/></svg></a>
+        <form class="inline" method="POST" action="/empleados/eliminar/{{ e.datos.id }}"
+              onsubmit="return confirm('¿Eliminar a {{ e.datos.nombre }}, su expediente y todos sus archivos?');">
+          <button type="submit" class="chico peligro solo-icono" title="Eliminar empleado" aria-label="Eliminar empleado"><svg class="ico"><use href="#i-trash"/></svg></button>
+        </form>
+      </div>
+    </td>
+  </tr>
+  {% else %}
+  <tr><td colspan="7" class="vacio-tabla">No hay empleados registrados.</td></tr>
+  {% endfor %}
+</table>
+</div>
+{% endblock %}

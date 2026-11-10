@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block titulo %}Modificar expediente{% endblock %}
+{% block contenido %}
+<a class="volver" href="/empleados"><svg class="ico"><use href="#i-back"/></svg>Volver a empleados</a>
+<div class="card perfil">
+  <span class="avatar grande">{{ empleado.nombre|iniciales }}</span>
+  <div class="perfil-datos">
+    <h1>{{ empleado.nombre }}</h1>
+    <p>{{ empleado.codigo }} · {{ empleado.puesto }} · {{ empleado.area }}</p>
+    <span class="pill">{{ empleado.sucursal }}</span>
+  </div>
+</div>
+<div class="card form-card">
+<h3>Checklist del expediente</h3>
+<p class="ayuda sep">Marca los documentos que ya fueron entregados.</p>
+{% if error %}<p class="error">{{ error }}</p>{% endif %}
+<form method="POST" action="/empleados/editar/{{ empleado.id }}">
+  <ul class="checklist">
+    {% for d in docs %}
+    <li>
+      <input type="checkbox" id="doc{{ d.id }}" name="doc" value="{{ d.id }}" {% if d.entregado %}checked{% endif %}>
+      <label for="doc{{ d.id }}">{{ d.nombre }}</label>
+    </li>
+    {% endfor %}
+  </ul>
+  <div class="form-pie">
+    <button type="submit">Guardar cambios</button>
+    <a class="boton secundario" href="/empleados">Cancelar</a>
+  </div>
+</form>
+</div>
+{% endblock %}

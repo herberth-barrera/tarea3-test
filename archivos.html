@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block titulo %}Archivos de {{ empleado.nombre }}{% endblock %}
+{% block contenido %}
+<a class="volver" href="/empleados"><svg class="ico"><use href="#i-back"/></svg>Volver a empleados</a>
+<div class="card perfil">
+  <span class="avatar grande">{{ empleado.nombre|iniciales }}</span>
+  <div class="perfil-datos">
+    <h1>{{ empleado.nombre }}</h1>
+    <p>{{ empleado.codigo }} · {{ empleado.puesto }} · {{ empleado.area }}</p>
+    <span class="pill">{{ empleado.sucursal }}</span>
+  </div>
+  <a class="boton" href="/empleados/{{ empleado.id }}/archivos/nuevo"><svg class="ico"><use href="#i-upload"/></svg>Subir documento</a>
+</div>
+
+<div class="kpis">
+  <div class="kpi"><div class="flexa"><span class="kpi-txt">Expediente digital</span><span class="kpi-num">{{ r.subidos }} de {{ r.total }}</span><progress class="azul" max="{{ r.total }}" value="{{ r.subidos }}"></progress></div></div>
+  <div class="kpi"><span class="kpi-ico vigente"><svg class="ico"><use href="#i-check"/></svg></span><div><span class="kpi-num">{{ r.vigentes }}</span><span class="kpi-txt">Vigentes</span></div></div>
+  <div class="kpi"><span class="kpi-ico vencido"><svg class="ico"><use href="#i-alert"/></svg></span><div><span class="kpi-num">{{ r.vencidos }}</span><span class="kpi-txt">Vencidos</span></div></div>
+  <div class="kpi"><span class="kpi-ico pendiente"><svg class="ico"><use href="#i-clock"/></svg></span><div><span class="kpi-num">{{ r.pendientes }}</span><span class="kpi-txt">Pendientes de subir</span></div></div>
+</div>
+
+<h2>Historial por documento</h2>
+{% for g in grupos %}
+{% set u = g.ultima %}
+<section class="card doc">
+  <header class="doc-cab">
+    <span class="tipo {{ u.tipo }}">{{ u.etiqueta }}</span>
+    <div class="doc-tit">
+      <h3>{{ g.nombre }}</h3>
+      <span class="peq"><span class="ver">v{{ u.datos.version }}</span> {{ u.datos.nombre_original }} · {{ u.tamano }} · Subido {{ u.datos.fecha_subida.strftime('%d/%m/%Y %H:%M') }}{% if u.aviso %} · {{ u.aviso }}{% endif %}</span>
+    </div>
+    <span class="badge {{ u.clase }}">{{ u.estado }}</span>
+    <div class="acciones">
+      <a class="boton chico suave" href="/archivos/{{ u.datos.id }}/descargar"><svg class="ico"><use href="#i-download"/></svg>Descargar</a>
+      <a class="boton chico suave" href="/empleados/{{ empleado.id }}/archivos/nuevo?documento={{ g.documento_id }}"><svg class="ico"><use href="#i-upload"/></svg>Nueva versión</a>
+    </div>
+  </header>
+  {% if g.versiones|length > 1 %}
+  <details class="hist" open>
+    <summary>Versiones anteriores ({{ g.versiones|length - 1 }})</summary>
+    <table class="versiones">
+      <tr><th>Versión</th><th>Archivo</th><th>Tamaño</th><th>Vence</th><th>Subido</th><th>Estado</th><th></th></tr>
+      {% for v in g.versiones[1:] %}
+      <tr>
+        <td><span class="ver">v{{ v.datos.version }}</span></td>
+        <td><span class="mini {{ v.tipo }}">{{ v.etiqueta }}</span>{{ v.datos.nombre_original }}</td>
+        <td>{{ v.tamano }}</td>
+        <td>{{ v.datos.fecha_vencimiento.strftime('%d/%m/%Y') if v.datos.fecha_vencimiento else '—' }}</td>
+        <td>{{ v.datos.fecha_subida.strftime('%d/%m/%Y %H:%M') }}</td>
+        <td><span class="badge {{ v.clase }}">{{ v.estado }}</span></td>
+        <td><a class="boton chico suave" href="/archivos/{{ v.datos.id }}/descargar"><svg class="ico"><use href="#i-download"/></svg>Descargar</a></td>
+      </tr>
+      {% endfor %}
+    </table>
+  </details>
+  {% endif %}
+</section>
+{% else %}
+<div class="card vacio-estado">
+  <svg class="ico"><use href="#i-folder"/></svg>
+  <h3>Todavía no hay archivos subidos</h3>
+  <p class="ayuda">Sube el primer documento del expediente para empezar el historial de versiones.</p>
+</div>
+{% endfor %}
+
+{% if pendientes %}
+<h2>Documentos pendientes</h2>
+<div class="pend-grid">
+  {% for p in pendientes %}
+  <div class="pend"><span>{{ p.nombre }}</span><a class="boton chico suave" href="/empleados/{{ empleado.id }}/archivos/nuevo?documento={{ p.id }}"><svg class="ico"><use href="#i-upload"/></svg>Subir</a></div>
+  {% endfor %}
+</div>
+{% endif %}
+{% endblock %}
